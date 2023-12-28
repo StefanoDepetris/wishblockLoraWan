@@ -12,23 +12,23 @@
 #include <LIS3DHTR.h>
 
 #define SUCCESS 0
-#define ERROR_INIT_TIMERS 1
-#define ERROR_LMH_INIT 2
 
 // Librerías y estructuras
 LIS3DHTR<TwoWire> accel;
 hw_config hwConfig;
 
 // Constantes setup
-const int SERIAL_BAUD_RATE = 115200;
-const int SERIAL_INIT_DELAY = 5000;
-const int SERIAL_INIT_LOADING= 100;
+#define  SERIAL_BAUD_RATE  115200
+#define SERIAL_INIT_DELAY  5000
+#define  SERIAL_INIT_LOADING 100
+#define  ANALOG_READ_RESOLUTION 12
 const eAnalogReference ANALOG_REFERENCE_TYPE = AR_INTERNAL_3_0;
-const int ANALOG_READ_RESOLUTION = 12;
+
 
 // Constantes de tiempo y LoRaWAN
-const unsigned long LORAWAN_APP_INTERVAL_SAMPLE = 1000;
-const unsigned long LORAWAN_APP_INTERVAL = 20000;
+#define  LORAWAN_APP_INTERVAL_SAMPLE  1000
+#define  LOW_BATTERY_INTERVAL  20000  
+#define  LORAWAN_APP_INTERVAL 10000 
 
 unsigned long previousMillis = 0;
 
@@ -55,14 +55,15 @@ const unsigned long LORAWAN_APP_DATA_BUFF_SIZE = 1000;
 uint8_t m_lora_app_data_buffer[LORAWAN_APP_DATA_BUFF_SIZE];
 lmh_app_data_t m_lora_app_data = {m_lora_app_data_buffer, 0, 0, 0, 0};
 
-const unsigned long ACCBUFFER_SIZE = 10;
+#define ACCBUFFERSIZE   10
+#define DATABUFFERSIZE  100
 unsigned long bufferIndex = 0;
-char buffer[ACCBUFFER_SIZE][100];
+char buffer[ACCBUFFERSIZE][100];
 
 TimerEvent_t appTimer;
-uint32_t batteryBuffer[ACCBUFFER_SIZE];
+uint32_t batteryBuffer[ACCBUFFERSIZE];
 unsigned long batteryBufferIndex = 0;
-float voltiosBuffer[ACCBUFFER_SIZE];
+float voltiosBuffer[ACCBUFFERSIZE];
 uint8_t batteryLevel = 100;
 uint8_t previousBatteryLevel = 100;
 
@@ -88,24 +89,25 @@ const float VOLTAGE_STEP_1 = 30.0;
 const float VOLTAGE_STEP_2 = 0.15;
 const float PERCENTAGE_STEP_1 = 10.0;
 const float PERCENTAGE_MULTIPLIER = 0.15;
-const double LORAWAN_MULTIPLIER = 2.55;
+const float LORAWAN_MULTIPLIER = 2.55;
+#define  BATTERY_LOW_THRESHOLD 15  
 
 // Parámetros LoRaWAN
 lmh_param_t g_lora_param_init = {LORAWAN_ADR_OFF, LORAWAN_DATERATE, LORAWAN_PUBLIC_NETWORK, JOINREQ_NBTRIALS, LORAWAN_TX_POWER, LORAWAN_DUTYCYCLE_OFF};
 
 // Declaración de funciones
-void lorawan_has_joined_handler(void);
-void lorawan_join_failed_handler(void);
-void lorawan_rx_handler(lmh_app_data_t *app_data);
-void lorawan_confirm_class_handler(DeviceClass_t Class);
-void send_lora_frame(void);
+void handlerSuccessJoinLorawan(void);
+void handlerFailedJoinLorawan(void);
+void handlerReceiveLorawan(lmh_app_data_t *app_data);
+void handlerConfirmClassLorawan(DeviceClass_t Class);
+void sendLoraFrame(void);
 void initLoRaHardware(void);
 void printWelcomeMessage(void);
-uint32_t initializeTimers(void);
+void initializeTimers(void);
 uint16_t calculateBatteryAverage();
 
 // Callbacks LoRaWAN
 lmh_callback_t g_lora_callbacks = {BoardGetBatteryLevel, BoardGetUniqueId, BoardGetRandomSeed,
-                                            lorawan_rx_handler, lorawan_has_joined_handler, lorawan_confirm_class_handler, lorawan_join_failed_handler};
+                                            handlerReceiveLorawan, handlerSuccessJoinLorawan, handlerConfirmClassLorawan, handlerFailedJoinLorawan};
 
 #endif 
