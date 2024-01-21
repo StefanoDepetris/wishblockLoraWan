@@ -76,6 +76,7 @@ void loop() {
     setSampleAcceleration();
     setAvgLevelBattery();
   }
+   aunit::TestRunner::run();
 }
 
 /**
@@ -129,7 +130,7 @@ void handlerFailedJoinLorawan(void) {
   * @brief Manejador para cuando se recibe un paquete LoRaWAN.
   * @param app_data Datos de la aplicación LoRaWAN recibidos.
   */
-void handlerReceiveLorawan(lmh_app_data_t *app_data) {
+void handlerReceiveLorawan(lmh_app_data_t* app_data) {
   Serial.printf("LoRa Packet received on port %d, size:%d, rssi:%d, snr:%d, data:%s\n",
                 app_data->port, app_data->buffsize, app_data->rssi, app_data->snr, app_data->buffer);
 }
@@ -149,7 +150,6 @@ void handlerConfirmClassLorawan(DeviceClass_t Class) {
   * @brief Prepara y envía un frame LoRaWAN con datos del acelerómetro y batería.Crea un JsonObject para los datos del acelerometro y bateria
   */
 void sendLoraFrame(void) {
-  uint16_t avgBat = 0;
   String accData = "";
   if (lmh_join_status_get() != LMH_SET) {
     return;
@@ -164,7 +164,7 @@ void sendLoraFrame(void) {
     }
   }
 
-  batteryLevel = calculateBatteryAverage();
+  batteryLevel = calculateBatteryAverage(batteryBuffer);
   jsonDocument["message"] = accData + " " + String(batteryLevel);
 
   String jsonString;
@@ -194,11 +194,12 @@ void sendLoraFrame(void) {
 }
 
 /**
-  * @brief Calcula el promedio de la batería.
-  * @return El promedio de la batería.
-  */
-uint16_t calculateBatteryAverage() {
-  uint16_t avgBat = 0;
+ * @brief Calcula el promedio de la batería.
+ * @param batteryBuffer Puntero al buffer de la batería.
+ * @return El promedio de la batería.
+ */
+uint32_t calculateBatteryAverage(const uint32_t* batteryBuffer) {
+  uint32_t avgBat = 0;
   for (int i = 0; i < ACCBUFFERSIZE; i++) {
     avgBat += batteryBuffer[i];
   }
@@ -219,6 +220,7 @@ void txLoraPeriodicHandler(void) {
   Serial.println("Sending frame now...");
   sendLoraFrame();
 }
+
 /**
   * @brief Lee el nivel de batería en milivoltios.
   * @return Nivel de batería en milivoltios.
@@ -246,20 +248,3 @@ uint8_t mvToPercent(float mvolts) {
   return static_cast<uint8_t>(PERCENTAGE_STEP_1 + (mvolts * PERCENTAGE_MULTIPLIER));
 }
 
-/**
-  * @brief Convierte milivoltios a valor de batería LoRaWAN.
-  * @param mvolts Nivel de batería en milivoltios.
-  * @return Valor de batería para LoRaWAN.
-  */
-uint8_t mvToLoRaWanBattVal(float mvolts) {
-  if (mvolts < MIN_VOLTAGE)
-    return 0;
-
-  if (mvolts < MID_VOLTAGE) {
-    mvolts -= MIN_VOLTAGE;
-    return static_cast<uint8_t>(mvolts / VOLTAGE_STEP_1 * LORAWAN_MULTIPLIER);
-  }
-
-  mvolts -= MID_VOLTAGE;
-  return static_cast<uint8_t>((PERCENTAGE_STEP_1 + (mvolts * PERCENTAGE_MULTIPLIER)) * LORAWAN_MULTIPLIER);
-}

@@ -10,6 +10,7 @@
 #include <Wire.h>
 #include <ArduinoJson.h>
 #include <LIS3DHTR.h>
+#include <AUnit.h>
 
 #define SUCCESS 0
 
@@ -104,9 +105,9 @@ void sendLoraFrame(void);
 void initLoRaHardware(void);
 void printWelcomeMessage(void);
 void initializeTimers(void);
-uint16_t calculateBatteryAverage();
+uint32_t calculateBatteryAverage(const uint32_t* batteryBuffer);
 
-// Callbacks LoRaWAN
+// LoRaMac Helper Callbacks
 lmh_callback_t g_lora_callbacks = {BoardGetBatteryLevel, BoardGetUniqueId, BoardGetRandomSeed,
                                             handlerReceiveLorawan, handlerSuccessJoinLorawan, handlerConfirmClassLorawan, handlerFailedJoinLorawan};
 
