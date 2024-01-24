@@ -36,8 +36,8 @@ unsigned long previousMillis = 0;
 // Configuración LoRaWAN
 #define SCHED_MAX_EVENT_DATA_SIZE APP_TIMER_SCHED_EVENT_DATA_SIZE
 #define SCHED_QUEUE_SIZE 60
-#define LORAWAN_DATERATE DR_5
-#define LORAWAN_TX_POWER TX_POWER_5
+#define LORAWAN_DATERATE DR_4
+#define LORAWAN_TX_POWER TX_POWER_3
 #define JOINREQ_NBTRIALS 3
 
 // Variables de estado LoRaWAN
@@ -49,10 +49,10 @@ uint8_t gAppPort = LORAWAN_APP_PORT;
 // Claves OTAA
 uint8_t nodeDeviceEUI[8] = {0xAC, 0x1F, 0x09, 0xFF, 0xFE, 0x06, 0x70, 0xD8};
 uint8_t nodeAppEUI[8] = {0xAC, 0x1F, 0x09, 0xFF, 0xFE, 0x06, 0x70, 0xD8};
-uint8_t nodeAppKey[16] = {0x35, 0x16, 0x61, 0x7A, 0x0B, 0x87, 0x9F, 0x43, 0xEF, 0x49, 0x09, 0xDD, 0x97, 0xEF, 0x94, 0xA3};
+uint8_t nodeAppKey[16] = {0x34, 0x96, 0xba, 0x71, 0xa3, 0x33, 0x16, 0xd9, 0x87, 0xd1, 0xa1, 0x7a, 0xf4, 0x7e, 0x75, 0x41};
 
 // Buffers y variables de batería
-const unsigned long LORAWAN_APP_DATA_BUFF_SIZE = 1000;
+const unsigned long LORAWAN_APP_DATA_BUFF_SIZE = 2048;
 uint8_t m_lora_app_data_buffer[LORAWAN_APP_DATA_BUFF_SIZE];
 lmh_app_data_t m_lora_app_data = {m_lora_app_data_buffer, 0, 0, 0, 0};
 
@@ -80,8 +80,7 @@ uint8_t count = 0;
 uint8_t count_fail = 0;
 
 // JSON Document
-const size_t JSON_BUFFER_SIZE = 512;
-StaticJsonDocument<JSON_BUFFER_SIZE> jsonDocument;
+DynamicJsonDocument jsonDocument(LORAWAN_APP_DATA_BUFF_SIZE); 
 
 // Constantes de voltaje y porcentaje
 const float MIN_VOLTAGE = 3300.0;

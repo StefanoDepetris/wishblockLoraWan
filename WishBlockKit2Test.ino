@@ -39,5 +39,3 @@ test(mvToPercentTest) {
   uint8_t expected1 = static_cast<uint8_t>(PERCENTAGE_STEP_1 + ((mvoltsMock1-MID_VOLTAGE) * PERCENTAGE_MULTIPLIER));
   assertEqual(result1, expected1);
 }
-
-

@@ -150,16 +150,20 @@ void handlerConfirmClassLorawan(DeviceClass_t Class) {
   * @brief Prepara y envía un frame LoRaWAN con datos del acelerómetro y batería.Crea un JsonObject para los datos del acelerometro y bateria
   */
 void sendLoraFrame(void) {
-  String accData = "";
   if (lmh_join_status_get() != LMH_SET) {
     return;
   }
-  jsonDocument.clear();
+
+  memset(m_lora_app_data.buffer, 0, LORAWAN_APP_DATA_BUFF_SIZE);
+  m_lora_app_data.port = gAppPort;
+
+  String accData = "";
   for (int fila = 0; fila < ACCBUFFERSIZE; fila++) {
     for (int col = 0; col < DATABUFFERSIZE; col++) {
       char elemento = buffer[fila][col];
-      if (elemento == '\0')
+      if (elemento == '\0') {
         break;
+      }
       accData += String(elemento);
     }
   }
@@ -167,17 +171,26 @@ void sendLoraFrame(void) {
   batteryLevel = calculateBatteryAverage(batteryBuffer);
   jsonDocument["message"] = accData + " " + String(batteryLevel);
 
-  String jsonString;
-  serializeJson(jsonDocument, jsonString);
-  Serial.println("Sending: " + jsonString);
-  m_lora_app_data.buffsize = jsonString.length();
+  Serial.print("Sending: ");
+  serializeJson(jsonDocument, Serial);
+  Serial.println();
 
-  jsonString.getBytes(m_lora_app_data.buffer, m_lora_app_data.buffsize + 1);
+  size_t size = measureJson(jsonDocument);
+  Serial.print("Size: ");
+  Serial.println(size);
+  if (size > LORAWAN_APP_DATA_BUFF_SIZE) {
+    Serial.println("Error: El tamaño del JSON excede el tamaño del buffer");
+    return;
+  }
+
+  serializeJson(jsonDocument, m_lora_app_data.buffer, size);
+  m_lora_app_data.buffsize = size;
+  jsonDocument.clear();  // Libera la memoria del documento JSON
 
   // Enviar los datos por LoRaWAN
-  lmh_error_status error = lmh_send(&m_lora_app_data, g_CurrentConfirm);
+  lmh_error_status status = lmh_send(&m_lora_app_data, g_CurrentConfirm);
 
-  switch (error) {
+  switch (status) {
     case LMH_SUCCESS:
       count++;
       Serial.printf("lmh_send ok count %d\n", count);
