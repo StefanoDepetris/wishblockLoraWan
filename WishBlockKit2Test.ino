@@ -31,7 +31,7 @@ test(mvToPercentTestMidVoltage) {
 
 
 //Test de funcion que convierte milivoltios a porcentaje de batería.
-test(mvToPercentTest) {
+test(mvToPercentTestTopVoltage) {
   float mvoltsMock1 = 3700.0;
 
   uint8_t result1 = mvToPercent(mvoltsMock1);

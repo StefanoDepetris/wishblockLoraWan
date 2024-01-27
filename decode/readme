@@ -1,0 +1,19 @@
+## Descarga e Instalación de Node.js:
+
+    En sitio web oficial de Node.js en https://nodejs.org/.
+    Descargamos el instalador de Node.js adecuado para el Sistema operativo.
+
+    Ejecuta el instalador descargado y seguimos  las instrucciones del proceso de instalación para instalar Node.js en tu sistema.
+## Agregar la Ubicación de Node.js a tu Variable de Entorno:
+
+    Este paso es opcional pero en caso de que si ponemos node --version o npm --version y no los reconoce.Tenemos que hacer estos pasos
+    Debemos agregar la ubicación de Node.js a la variable de entorno PATH.
+
+## Para instalar una biblioteca de prueba JEST.
+
+    Ejecutamo el comando npm install --save-dev jest. Esto instalará Jest como una dependencia de desarrollo del proyecto.
+
+## Ejecución del Test:
+
+    Abrimos una terminal o línea de comandos en el directorio de tu proyecto.
+    Ejecuta el comando npx jest para ejecutar todos los tests en tu proyecto.
