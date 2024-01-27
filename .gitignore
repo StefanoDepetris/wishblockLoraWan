@@ -4,4 +4,4 @@ package-lock.json
 *.zip
 *.hex
 *.elf
-*.map
+*.map   

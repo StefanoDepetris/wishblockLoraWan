@@ -5,10 +5,8 @@ function Decode(fPort, obj) {
     var muestras = [];
     var huboMovimiento;
     
-    console.log("Contenido de obj:", obj);
-
     msg = obj.message;
-  
+
     // Convertir el objeto a cadena
     var dataString = JSON.stringify(msg);
   
@@ -65,7 +63,7 @@ function Decode(fPort, obj) {
     // Agregar los tags al objeto de datos
     data.tags = {
       wishblock_battery_level: battery,
-      wiblock_movement: huboMovimiento,
+      wishblock_movement: huboMovimiento,
       wishblock_magnitud: moduloMovimiento,
     };
   
