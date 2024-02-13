@@ -1,8 +1,8 @@
 function Decode(fPort, obj) {
   var msg = "";
   var data = {};
-  var umbral_variacion = 0.1;
-  var huboMovimiento;
+  var threshold_variation  = 0.1;
+  var wasMovement;
 
   // Obtener el mensaje como cadena
   for (var i = 0; i < obj.length; i++) {
@@ -15,15 +15,12 @@ function Decode(fPort, obj) {
   // Convertir el objeto a cadena
   var dataString = JSON.stringify(data);
 
-  console.log(dataString);
-
   // Encontrar la posición del último corchete
   var lastBracketPosition = dataString.lastIndexOf(']');
 
   // Obtener el nivel de batería desde la cadena
   var battery = dataString.substring(lastBracketPosition + 1, dataString.length - 2).trim();
 
-  console.log(battery);
 
   // Eliminar el nivel de batería de dataString
   dataString = dataString.substring(0, lastBracketPosition + 1);
@@ -32,9 +29,9 @@ function Decode(fPort, obj) {
   var muestrasString = dataString.split("][");
 
   // Procesar las muestras
-  var moduloAnterior = 0.0;
-  var moduloMovimiento = 0.0;
-  var contadorMovimiento = 0;
+  var previousModule = 0.0;
+  var movementModule = 0.0;
+  var movementCounter  = 0;
 
   for (var i = 0; i < muestrasString.length; i++) {
     // Eliminar corchetes al principio y al final de cada muestra
@@ -52,28 +49,28 @@ function Decode(fPort, obj) {
     var modulo = Math.sqrt(lecturaX * lecturaX + lecturaY * lecturaY + lecturaZ * lecturaZ);
 
     // Comparar con el valor anterior solo si no es la primera muestra
-    if (moduloAnterior !== 0.0 && Math.abs(modulo - moduloAnterior) > umbral_variacion) {
-      contadorMovimiento++;
-      moduloMovimiento=Math.abs(modulo - moduloAnterior)- umbral_variacion;
+    if (previousModule !== 0.0 && Math.abs(modulo - previousModule) > threshold_variation) {
+      movementCounter ++;
+      movementModule=Math.abs(modulo - previousModule)- threshold_variation ;
     }
 
     // Actualizar el valor anterior
-    moduloAnterior = modulo;
+    previousModule = modulo;
   }
   
   // Determinar si hubo movimiento
-  if (contadorMovimiento >= 3) {
-    huboMovimiento = "True";
+  if (movementCounter>= 3) {
+    wasMovement = "True";
   } else {
-    huboMovimiento = "False";
-    moduloMovimiento=0.0;
+    wasMovement = "False";
+    movementModule=0.0;
   }
 
   // Agregar los tags al objeto de datos
   data.tags = {
     wishblock_battery_level: battery,
-    wishblock_movement: huboMovimiento,
-    wishblock_magnitud: moduloMovimiento,
+    wishblock_movement: wasMovement,
+    wishblock_magnitude: movementModule,
   };
 
   // Devolver el objeto de datos modificado
