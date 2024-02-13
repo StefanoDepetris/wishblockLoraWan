@@ -47,9 +47,6 @@ describe('Decode', () => {
       // Crear un buffer a partir de la cadena JSON
       const objBytes = Buffer.from(objJSON);
   
-      // Codificar el buffer en base64
-      const objBase64 = objBytes.toString('base64');
-  
       return objBytes;
   }
 
@@ -63,9 +60,6 @@ describe('Decode', () => {
 
     // Crear un buffer a partir de la cadena JSON
     const objBytes = Buffer.from(objJSON);
-
-    // Codificar el buffer en base64
-    const objBase64 = objBytes.toString('base64');
 
     return objBytes;
   }
