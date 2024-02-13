@@ -1,37 +1,31 @@
 function Decode(fPort, obj) {
+
   var msg = "";
   var data = {};
-  var threshold_variation  = 0.1;
+  var threshold_variation = 0.1;
   var wasMovement;
+    // Procesar las muestras
+  var previousModule = 0.0;
+  var movementModule = 0.0;
+  var movementCounter = 0;
 
   // Obtener el mensaje como cadena
   for (var i = 0; i < obj.length; i++) {
     msg += (String.fromCharCode(obj[i]));
   }
   
-  // Parsear el objeto JSON desde la cadena
-  data = JSON.parse(msg);
-
-  // Convertir el objeto a cadena
-  var dataString = JSON.stringify(data);
-
   // Encontrar la posición del último corchete
-  var lastBracketPosition = dataString.lastIndexOf(']');
+  var lastBracketPosition = msg.lastIndexOf(']');
 
   // Obtener el nivel de batería desde la cadena
-  var battery = dataString.substring(lastBracketPosition + 1, dataString.length - 2).trim();
+  var battery = msg.substring(lastBracketPosition + 1, msg.length - 2).trim();
 
-
-  // Eliminar el nivel de batería de dataString
-  dataString = dataString.substring(0, lastBracketPosition + 1);
+  // Eliminar el nivel de batería de msg
+  msg = msg.substring(0, lastBracketPosition + 1);
 
   // Separar las muestras
-  var muestrasString = dataString.split("][");
+  var muestrasString = msg.split("][");
 
-  // Procesar las muestras
-  var previousModule = 0.0;
-  var movementModule = 0.0;
-  var movementCounter  = 0;
 
   for (var i = 0; i < muestrasString.length; i++) {
     // Eliminar corchetes al principio y al final de cada muestra
@@ -53,7 +47,6 @@ function Decode(fPort, obj) {
       movementCounter ++;
       movementModule=Math.abs(modulo - previousModule)- threshold_variation ;
     }
-
     // Actualizar el valor anterior
     previousModule = modulo;
   }
