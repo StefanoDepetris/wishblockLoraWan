@@ -207,6 +207,7 @@ void sendLoraFrame(void) {
 }
 
 /**
+ * https://github.com/adafruit/Adafruit_nRF52_Arduino/blob/master/libraries/Bluefruit52Lib/examples/Hardware/adc_vbat/adc_vbat.ino
  * @brief Calcula el promedio de la batería.
  * @param batteryBuffer Puntero al buffer de la batería.
  * @return El promedio de la batería.

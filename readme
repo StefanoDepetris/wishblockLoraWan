@@ -1,0 +1,2 @@
+## El codigo asociado a la lectura de la bateria se obtuvo de ejemplo de la liberia Adafruit_nRF52_Arduino
+https://github.com/adafruit/Adafruit_nRF52_Arduino/blob/master/libraries/Bluefruit52Lib/examples/Hardware/adc_vbat/adc_vbat.ino
